@@ -9,12 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let originMarker = null; // Marcador para o ponto de origem
     let destinationMarker = null; // Marcador para o ponto de destino
 
-    // **SUA CHAVE DE API DO OPENROUTESERVICE AQUI**
-    // IMPORTANTE: Sua chave foi inserida abaixo!
     const OPENROUTESERVICE_API_KEY = '5b3ce3597851110001cf62483b983ee929414b2bbe3dc346ddc6c3da';
 
-    // **NOVO: URL do proxy CORS Anywhere**
-    const CORS_PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+    // **MUDANÇA AQUI: Nova URL do proxy AllOrigins**
+    const CORS_PROXY_URL = 'https://api.allorigins.win/raw?url=';
+
 
     // As avaliações persistirão no LocalStorage
     const storedEvaluations = loadEvaluationsFromLocalStorage();
@@ -103,8 +102,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // **NOVO: Funções de Geocodificação e Roteamento**
 
     async function geocodeAddress(address) {
-        // AQUI: Adicione o proxy na URL da geocodificação
-        const url = `${CORS_PROXY_URL}https://api.openrouteservice.org/geocode/search?api_key=${OPENROUTESERVICE_API_KEY}&text=${encodeURIComponent(address)}&boundary.country=BR`;
+        // AQUI: Usando AllOrigins
+        const targetUrl = `https://api.openrouteservice.org/geocode/search?api_key=<span class="math-inline">\{OPENROUTESERVICE\_API\_KEY\}&text\=</span>{encodeURIComponent(address)}&boundary.country=BR`;
+        const url = `<span class="math-inline">\{CORS\_PROXY\_URL\}</span>{encodeURIComponent(targetUrl)}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -126,10 +126,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function getRoute(originCoords, destinationCoords) {
         // As coordenadas para a API de roteamento são [lon, lat]
-        const start = `${originCoords[1]},${originCoords[0]}`;
-        const end = `${destinationCoords[1]},${destinationCoords[0]}`;
-        // AQUI: Adicione o proxy na URL do roteamento
-        const url = `${CORS_PROXY_URL}https://api.openrouteservice.org/v2/directions/driving-car?api_key=${OPENROUTESERVICE_API_KEY}&start=${start}&end=${end}`;
+        const start = `<span class="math-inline">\{originCoords\[1\]\},</span>{originCoords[0]}`;
+        const end = `<span class="math-inline">\{destinationCoords\[1\]\},</span>{destinationCoords[0]}`;
+        // AQUI: Usando AllOrigins
+        const targetUrl = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=<span class="math-inline">\{OPENROUTESERVICE\_API\_KEY\}&start\=</span>{start}&end=${end}`;
+        const url = `<span class="math-inline">\{CORS\_PROXY\_URL\}</span>{encodeURIComponent(targetUrl)}`;
 
         try {
             const response = await fetch(url, {
