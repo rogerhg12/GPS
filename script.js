@@ -9,9 +9,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let originMarker = null; // Marcador para o ponto de origem
     let destinationMarker = null; // Marcador para o ponto de destino
 
+    // **SUA CHAVE DE API DO OPENROUTESERVICE AQUI**
     const OPENROUTESERVICE_API_KEY = '5b3ce3597851110001cf62483b983ee929414b2bbe3dc346ddc6c3da';
 
-    // **MUDANÇA AQUI: Nova URL do proxy AllOrigins**
+    // **MUDANÇA AQUI: URL do proxy AllOrigins**
     const CORS_PROXY_URL = 'https://api.allorigins.win/raw?url=';
 
 
@@ -99,12 +100,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const startSegmentEvaluationBtn = document.getElementById('startSegmentEvaluation');
     const endSegmentEvaluationBtn = document.getElementById('endSegmentEvaluation');
 
-    // **NOVO: Funções de Geocodificação e Roteamento**
+    // **Funções de Geocodificação e Roteamento**
 
     async function geocodeAddress(address) {
-        // AQUI: Usando AllOrigins
-        const targetUrl = `https://api.openrouteservice.org/geocode/search?api_key=<span class="math-inline">\{OPENROUTESERVICE\_API\_KEY\}&text\=</span>{encodeURIComponent(address)}&boundary.country=BR`;
-        const url = `<span class="math-inline">\{CORS\_PROXY\_URL\}</span>{encodeURIComponent(targetUrl)}`;
+        // AQUI: A URL da API do OpenRouteService para geocodificação
+        const openRouteServiceUrl = `https://api.openrouteservice.org/geocode/search?api_key=${OPENROUTESERVICE_API_KEY}&text=${encodeURIComponent(address)}&boundary.country=BR`;
+        // A URL final com o proxy AllOrigins
+        const url = `${CORS_PROXY_URL}${encodeURIComponent(openRouteServiceUrl)}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -126,11 +128,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function getRoute(originCoords, destinationCoords) {
         // As coordenadas para a API de roteamento são [lon, lat]
-        const start = `<span class="math-inline">\{originCoords\[1\]\},</span>{originCoords[0]}`;
-        const end = `<span class="math-inline">\{destinationCoords\[1\]\},</span>{destinationCoords[0]}`;
-        // AQUI: Usando AllOrigins
-        const targetUrl = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=<span class="math-inline">\{OPENROUTESERVICE\_API\_KEY\}&start\=</span>{start}&end=${end}`;
-        const url = `<span class="math-inline">\{CORS\_PROXY\_URL\}</span>{encodeURIComponent(targetUrl)}`;
+        const start = `${originCoords[1]},${originCoords[0]}`;
+        const end = `${destinationCoords[1]},${destinationCoords[0]}`;
+        // AQUI: A URL da API do OpenRouteService para roteamento
+        const openRouteServiceUrl = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${OPENROUTESERVICE_API_KEY}&start=${start}&end=${end}`;
+        // A URL final com o proxy AllOrigins
+        const url = `${CORS_PROXY_URL}${encodeURIComponent(openRouteServiceUrl)}`;
 
         try {
             const response = await fetch(url, {
@@ -153,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // **NOVO: Event Listener para o botão Buscar Rota**
+    // Event Listener para o botão Buscar Rota
     findRouteBtn.addEventListener('click', async function() {
         const originAddress = originInput.value.trim();
         const destinationAddress = destinationInput.value.trim();
