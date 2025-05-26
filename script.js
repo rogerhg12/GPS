@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // IMPORTANTE: Sua chave foi inserida abaixo!
     const OPENROUTESERVICE_API_KEY = '5b3ce3597851110001cf62483b983ee929414b2bbe3dc346ddc6c3da';
 
+    // **NOVO: URL do proxy CORS Anywhere**
+    const CORS_PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+
     // As avaliações persistirão no LocalStorage
     const storedEvaluations = loadEvaluationsFromLocalStorage();
 
@@ -100,7 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // **NOVO: Funções de Geocodificação e Roteamento**
 
     async function geocodeAddress(address) {
-        const url = `https://api.openrouteservice.org/geocode/search?api_key=${OPENROUTESERVICE_API_KEY}&text=${encodeURIComponent(address)}&boundary.country=BR`;
+        // AQUI: Adicione o proxy na URL da geocodificação
+        const url = `${CORS_PROXY_URL}https://api.openrouteservice.org/geocode/search?api_key=${OPENROUTESERVICE_API_KEY}&text=${encodeURIComponent(address)}&boundary.country=BR`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -124,7 +128,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // As coordenadas para a API de roteamento são [lon, lat]
         const start = `${originCoords[1]},${originCoords[0]}`;
         const end = `${destinationCoords[1]},${destinationCoords[0]}`;
-        const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${OPENROUTESERVICE_API_KEY}&start=${start}&end=${end}`;
+        // AQUI: Adicione o proxy na URL do roteamento
+        const url = `${CORS_PROXY_URL}https://api.openrouteservice.org/v2/directions/driving-car?api_key=${OPENROUTESERVICE_API_KEY}&start=${start}&end=${end}`;
 
         try {
             const response = await fetch(url, {
@@ -167,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // 2. Geocodificar destino
         const destinationCoords = await geocodeAddress(destinationAddress);
         if (!destinationCoords) {
-            alert('Destino não encontrado. Verifique o endereço.');
+            alert('Destino não encontrada. Verifique o endereço.');
             return;
         }
 
