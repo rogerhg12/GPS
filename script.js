@@ -77,4 +77,61 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Por favor, planeje uma rota antes de avaliar o piso.');
                 return;
             }
-// ... (restante do script.js)
+            // ESTE É O LOCAL ONDE SEU CÓDIGO ANTERIOR TERMINOU BRUSCAMENTE.
+            // VOCÊ PRECISARÁ CONTINUAR A PARTIR DAQUI COM A LÓGICA DE AVALIAÇÃO.
+            // POR ENQUANTO, APENAS FECHAREI AS CHAVES PARA CORRIGIR O ERRO DE SINTAXE.
+        }); // Fecha o addEventListener para cada botão de avaliação
+    }); // Fecha o forEach dos botões de avaliação
+
+    // Adicione o restante do seu código JavaScript aqui, incluindo as funções
+    // loadEvaluationsFromLocalStorage() e isNearRoute() e o código de planejamento de rotas
+    // e avaliação de segmentos.
+
+    // EXEMPLO DE FUNÇÕES FALTANTES (ADICIONE SEU CÓDIGO REAL AQUI)
+    function loadEvaluationsFromLocalStorage() {
+        // Implemente sua lógica para carregar avaliações do LocalStorage
+        console.log("Função loadEvaluationsFromLocalStorage chamada.");
+        return {}; // Retorna um objeto vazio por padrão
+    }
+
+    function isNearRoute(userLocation, routeCoordinates, maxDistance) {
+        // Implemente sua lógica para verificar se o usuário está perto da rota
+        // Você pode usar Turf.js aqui para calcular distâncias.
+        console.log("Função isNearRoute chamada.");
+        // Exemplo simples (você precisará de uma lógica real com Turf.js para isso)
+        // Por exemplo, usando turf.pointToLineDistance ou turf.nearestPointOnLine
+        if (routeCoordinates.length === 0) return false;
+        // Apenas para que o script não quebre, retorne true se não houver rota definida
+        // Você deve substituir isso pela sua lógica real.
+        return true; 
+    }
+
+    // Código para os botões de planejamento de rota e avaliação de segmento
+    const findRouteBtn = document.getElementById('findRouteBtn');
+    const locateMeBtn = document.getElementById('locateMeBtn');
+    const startSegmentEvaluationBtn = document.getElementById('startSegmentEvaluation');
+    const endSegmentEvaluationBtn = document.getElementById('endSegmentEvaluation');
+
+    findRouteBtn.addEventListener('click', function() {
+        // Lógica para buscar rota
+        alert('Funcionalidade Buscar Rota em desenvolvimento.');
+    });
+
+    locateMeBtn.addEventListener('click', getUserLocationAndCenterMap);
+
+    startSegmentEvaluationBtn.addEventListener('click', function() {
+        // Lógica para iniciar avaliação de trecho
+        alert('Funcionalidade Iniciar Avaliação de Trecho em desenvolvimento.');
+        endSegmentEvaluationBtn.disabled = false;
+        startSegmentEvaluationBtn.disabled = true;
+    });
+
+    endSegmentEvaluationBtn.addEventListener('click', function() {
+        // Lógica para finalizar avaliação de trecho
+        alert('Funcionalidade Finalizar Avaliação em desenvolvimento.');
+        startSegmentEvaluationBtn.disabled = false;
+        endSegmentEvaluationBtn.disabled = true;
+    });
+
+
+}); // Fecha o document.addEventListener('DOMContentLoaded', function() { ... });
