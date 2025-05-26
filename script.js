@@ -9,11 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
     let originMarker = null; // Marcador para o ponto de origem
     let destinationMarker = null; // Marcador para o ponto de destino
 
-    // **SUA CHAVE DE API DO OPENROUTESERVICE AQUI**
+    // SUA CHAVE DE API DO OPENROUTESERVICE AQUI
     const OPENROUTESERVICE_API_KEY = '5b3ce3597851110001cf62483b983ee929414b2bbe3dc346ddc6c3da';
 
-    // **MUDANÇA AQUI: URL do proxy AllOrigins**
+    // URL do proxy AllOrigins
     const CORS_PROXY_URL = 'https://api.allorigins.win/raw?url=';
+
+    // **MUDANÇA AQUI: Coordenadas do centro de prioridade (Porto Alegre)**
+    // Estas coordenadas serão usadas para "bias" (priorizar) a busca de endereços.
+    const GEOCENTRIC_LAT = -30.0346; // Latitude de Porto Alegre
+    const GEOCENTRIC_LON = -51.2177; // Longitude de Porto Alegre
 
 
     // As avaliações persistirão no LocalStorage
@@ -100,11 +105,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const startSegmentEvaluationBtn = document.getElementById('startSegmentEvaluation');
     const endSegmentEvaluationBtn = document.getElementById('endSegmentEvaluation');
 
-    // **Funções de Geocodificação e Roteamento**
+    // Funções de Geocodificação e Roteamento
 
     async function geocodeAddress(address) {
         // AQUI: A URL da API do OpenRouteService para geocodificação
-        const openRouteServiceUrl = `https://api.openrouteservice.org/geocode/search?api_key=${OPENROUTESERVICE_API_KEY}&text=${encodeURIComponent(address)}&boundary.country=BR`;
+        // Adicionando 'point' para priorizar resultados próximos a Porto Alegre
+        const openRouteServiceUrl = `https://api.openrouteservice.org/geocode/search?api_key=${OPENROUTESERVICE_API_KEY}&text=${encodeURIComponent(address)}&boundary.country=BR&point.lat=${GEOCENTRIC_LAT}&point.lon=${GEOCENTRIC_LON}`;
         // A URL final com o proxy AllOrigins
         const url = `${CORS_PROXY_URL}${encodeURIComponent(openRouteServiceUrl)}`;
         try {
