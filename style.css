@@ -1,0 +1,143 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 30px;
+}
+
+#map {
+    height: 600px; /* Define a altura do mapa */
+    width: 80%; /* Define a largura do mapa */
+    margin: 20px auto; /* Centraliza o mapa na página */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Estilos para o contêiner de planejamento de rota */
+.route-planning-container {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 80%;
+    margin: 0 auto 30px auto; /* Centraliza e adiciona margem inferior */
+    text-align: center;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    display: flex; /* Para alinhar label e input */
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
+}
+
+.input-group label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: #555;
+    min-width: 60px; /* Garante alinhamento das labels */
+    text-align: right;
+}
+
+.input-group input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 60%; /* Ajusta a largura dos campos */
+    max-width: 300px; /* Limita a largura máxima */
+    font-size: 16px;
+}
+
+/* Grupo para os botões de ação para melhor organização */
+.action-buttons-group {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    gap: 10px; /* Espaçamento entre os botões */
+}
+
+/* Estilos para os botões de ação (Buscar Rota, Minha Localização) */
+.action-btn {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 25px;
+    background-color: #007bff; /* Azul padrão */
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-btn:hover {
+    background-color: #0056b3;
+}
+
+
+/* Estilos para o contêiner de avaliação */
+.evaluation-container {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+/* Estilos para os botões de avaliação */
+.evaluation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.evaluation-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.evaluation-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Cores específicas para cada nível de avaliação */
+.evaluation-btn[data-level="otimo"] { background-color: #28a745; }
+.evaluation-btn[data-level="bom"] { background-color: #17a2b8; }
+.evaluation-btn[data-level="regular"] { background-color: #ffc107; color: #333; }
+.evaluation-btn[data-level="ruim"] { background-color: #fd7e14; }
+.evaluation-btn[data-level="pessimo"] { background-color: #dc3545; }
+
+.evaluation-btn[data-level="otimo"]:hover { background-color: #218838; }
+.evaluation-btn[data-level="bom"]:hover { background-color: #138496; }
+.evaluation-btn[data-level="regular"]:hover { background-color: #e0a800; }
+.evaluation-btn[data-level="ruim"]:hover { background-color: #e66a00; }
+.evaluation-btn[data-level="pessimo"]:hover { background-color: #c82333; }
+
+/* NOVO: Estilos para os botões de avaliação de trecho (já usam .action-btn) */
+.segment-evaluation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px; /* Adiciona um pouco de espaço acima */
+}

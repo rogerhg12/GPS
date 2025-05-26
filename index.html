@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de Piso e Rotas</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="turf.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Avalie o Piso e Planeje suas Rotas!</h1>
+
+    <div class="route-planning-container">
+        <h2>Planejar Trajeto</h2>
+        <div class="input-group">
+            <label for="originInput">Origem:</label>
+            <input type="text" id="originInput" placeholder="Ex: Rua A, 123">
+        </div>
+        <div class="input-group">
+            <label for="destinationInput">Destino:</label>
+            <input type="text" id="destinationInput" placeholder="Ex: Av. B, 456">
+        </div>
+        <div class="action-buttons-group">
+            <button id="findRouteBtn" class="action-btn">Buscar Rota</button>
+            <button id="locateMeBtn" class="action-btn">Minha Localização</button>
+        </div>
+    </div>
+
+    <div id="map"></div> <div class="evaluation-container">
+        <h2>Como está o piso aqui?</h2>
+        <div class="evaluation-buttons">
+            <button class="evaluation-btn" data-level="otimo">Ótimo</button>
+            <button class="evaluation-btn" data-level="bom">Bom</button>
+            <button class="evaluation-btn" data-level="regular">Regular</button>
+            <button class="evaluation-btn" data-level="ruim">Ruim</button>
+            <button class="evaluation-btn" data-level="pessimo">Péssimo</button>
+        </div>
+        <div class="segment-evaluation-buttons">
+            <button id="startSegmentEvaluation" class="action-btn">Iniciar Avaliação de Trecho</button>
+            <button id="endSegmentEvaluation" class="action-btn" disabled>Finalizar Avaliação</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
