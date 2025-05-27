@@ -1,7 +1,82 @@
-/* Estilos para o grupo de input, necessários para posicionar a lista de sugestões */
+/* Estilos gerais do corpo */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex; /* Permite que o mapa e os controles fiquem lado a lado */
+    height: 100vh; /* Altura total da viewport */
+    overflow: hidden; /* Evita barras de rolagem indesejadas */
+    background-color: #f0f0f0;
+}
+
+/* Estilos do mapa */
+#map {
+    flex-grow: 1; /* Ocupa todo o espaço disponível na largura */
+    height: 100%; /* Ocupa toda a altura do corpo */
+    background-color: #ccc; /* Cor de fundo para o caso de o mapa não carregar */
+    z-index: 0; /* Garante que o mapa fique abaixo dos controles */
+}
+
+/* Estilos dos controles laterais */
+.controls {
+    width: 350px; /* Largura fixa para a barra de controles */
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaço entre os elementos */
+    overflow-y: auto; /* Adiciona rolagem se o conteúdo for muito grande */
+    z-index: 1; /* Garante que os controles fiquem acima do mapa */
+    box-sizing: border-box; /* Inclui padding e border na largura/altura */
+}
+
+.controls h1 {
+    margin-top: 0;
+    color: #333;
+    text-align: center;
+    font-size: 1.8em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.controls h2 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 1.4em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+/* Estilos para grupos de input (label + input + suggestions) */
 .input-group {
-    position: relative; /* Essencial para que a lista de sugestões (position: absolute) se posicione corretamente em relação a este elemento */
-    margin-bottom: 10px; /* Adiciona um pouco de espaço abaixo de cada grupo de input */
+    position: relative; /* Necessário para posicionar as sugestões */
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.input-group input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input[type="text"]:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 /* Estilos para a lista de sugestões */
@@ -9,29 +84,160 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    border: 1px solid #ccc;
-    max-height: 200px; /* Limita a altura e adiciona scroll se houver muitas sugestões */
-    overflow-y: auto;
-    background-color: white;
-    position: absolute; /* Para que a lista de sugestões apareça sobre outros elementos e não empurre o layout */
-    z-index: 1000; /* Garante que a lista fique acima de outros elementos na página */
-    width: 100%; /* Faz a lista ter a mesma largura do input pai */
-    box-sizing: border-box; /* Inclui padding e border na largura total */
-    display: none; /* Inicia oculto, só aparece quando há sugestões */
-    /* Para posicionar a lista exatamente abaixo do input, ajuste o top se necessário.
-       Geralmente, position: relative no pai e position: absolute na lista são suficientes. */
+    position: absolute;
+    top: 100%; /* Posiciona a lista abaixo do input */
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top: none; /* Remove a borda superior para parecer que continua do input */
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* Garante que a lista de sugestões fique por cima de outros elementos */
+    max-height: 200px; /* Altura máxima para a lista */
+    overflow-y: auto; /* Adiciona rolagem se tiver muitas sugestões */
+    display: none; /* Inicialmente oculta, o JS a mostrará */
 }
 
-.suggestion-item {
-    padding: 8px;
+.suggestions-list li {
+    padding: 10px;
     cursor: pointer;
     border-bottom: 1px solid #eee;
+    font-size: 0.95em;
+    color: #444;
 }
 
-.suggestion-item:last-child {
-    border-bottom: none; /* Remove a borda do último item para melhor estética */
+.suggestions-list li:last-child {
+    border-bottom: none; /* Remove a borda do último item */
 }
 
-.suggestion-item:hover {
+.suggestions-list li:hover {
     background-color: #f0f0f0;
+    color: #007bff;
+}
+
+/* Estilos para botões */
+.controls button {
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-sizing: border-box;
+}
+
+.controls button:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.controls button:active {
+    transform: translateY(0);
+}
+
+.controls button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Estilos para os botões de avaliação de piso */
+.evaluation-buttons {
+    display: flex;
+    justify-content: space-around; /* Distribui os botões igualmente */
+    gap: 5px; /* Reduzi o gap para caberem 5 botões */
+    margin-top: 10px;
+    flex-wrap: wrap; /* Permite que os botões quebrem a linha em telas menores */
+}
+
+.evaluation-btn {
+    flex: 1; /* Faz com que os botões ocupem o espaço disponível igualmente */
+    min-width: 60px; /* Garante um tamanho mínimo para os botões */
+    padding: 8px; /* Reduzi o padding para caberem melhor */
+    font-size: 0.85em; /* Reduzi o tamanho da fonte */
+}
+
+/* Cores específicas para os botões de avaliação */
+.evaluation-btn[data-rating="otimo"] {
+    background-color: #1a8f4c; /* Verde mais escuro para ótimo */
+}
+.evaluation-btn[data-rating="otimo"]:hover {
+    background-color: #157a40;
+}
+
+.evaluation-btn[data-rating="bom"] {
+    background-color: #28a745; /* Verde */
+}
+.evaluation-btn[data-rating="bom"]:hover {
+    background-color: #218838;
+}
+
+.evaluation-btn[data-rating="regular"] {
+    background-color: #ffc107; /* Amarelo */
+    color: #333; /* Texto escuro para contraste */
+}
+.evaluation-btn[data-rating="regular"]:hover {
+    background-color: #e0a800;
+}
+
+.evaluation-btn[data-rating="ruim"] {
+    background-color: #dc3545; /* Vermelho */
+}
+.evaluation-btn[data-rating="ruim"]:hover {
+    background-color: #c82333;
+}
+
+.evaluation-btn[data-rating="pessimo"] {
+    background-color: #8c0000; /* Vermelho mais escuro para péssimo */
+}
+.evaluation-btn[data-rating="pessimo"]:hover {
+    background-color: #700000;
+}
+
+/* Estilos para os botões de avaliação de segmento */
+.segment-evaluation {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.segment-evaluation button {
+    flex: 1;
+    background-color: #6c757d; /* Cinza */
+}
+
+.segment-evaluation button:hover {
+    background-color: #5a6268;
+}
+
+/* Responsividade básica para telas menores */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column; /* Empilha o mapa e os controles verticalmente */
+    }
+
+    #map {
+        height: 50vh; /* Ocupa metade da altura em telas pequenas */
+        width: 100%;
+    }
+
+    .controls {
+        width: 100%; /* Ocupa toda a largura em telas pequenas */
+        height: 50vh; /* Ocupa a outra metade da altura */
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Sombra na parte superior */
+        border-top: 1px solid #eee;
+    }
+
+    .evaluation-buttons {
+        gap: 5px; /* Espaço entre os botões */
+    }
+
+    .evaluation-btn {
+        flex: 1 1 auto; /* Permite que os botões cresçam e encolham, mas garantam o min-width */
+        font-size: 0.75em; /* Ajusta a fonte para telas muito pequenas */
+        min-width: unset; /* Remove o min-width em telas pequenas para maior flexibilidade */
+    }
 }
