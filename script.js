@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentRoutePolyline = null; // Variável para armazenar a polyline da rota atual
     let activeRouteCoordinates = []; // Para armazenar os LatLngs da rota atual (formato [lat, lon])
 
-    // **NOVO: Variáveis para planejamento de rota**
+    // Variáveis para planejamento de rota
     let originMarker = null; // Marcador para o ponto de origem
     let destinationMarker = null; // Marcador para o ponto de destino
 
@@ -15,11 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // URL do proxy AllOrigins
     const CORS_PROXY_URL = 'https://api.allorigins.win/raw?url=';
 
-    // **MUDANÇA AQUI: Coordenadas do centro de prioridade (Porto Alegre)**
-    // Estas coordenadas serão usadas para "bias" (priorizar) a busca de endereços.
+    // Coordenadas do centro de prioridade (Porto Alegre)
     const GEOCENTRIC_LAT = -30.0346; // Latitude de Porto Alegre
     const GEOCENTRIC_LON = -51.2177; // Longitude de Porto Alegre
-
 
     // As avaliações persistirão no LocalStorage
     const storedEvaluations = loadEvaluationsFromLocalStorage();
@@ -105,13 +103,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const startSegmentEvaluationBtn = document.getElementById('startSegmentEvaluation');
     const endSegmentEvaluationBtn = document.getElementById('endSegmentEvaluation');
 
+    // **NOVAS VARIÁVEIS PARA AUTOCOMPLETAR**
+    const originSuggestions = document.getElementById('originSuggestions');
+    const destinationSuggestions = document.getElementById('destinationSuggestions');
+    let debounceTimeout;
+
     // Funções de Geocodificação e Roteamento
 
     async function geocodeAddress(address) {
-        // AQUI: A URL da API do OpenRouteService para geocodificação
-        // Adicionando 'point' para priorizar resultados próximos a Porto Alegre
+        if (!address) return null; // Não faça requisição com endereço vazio
+
         const openRouteServiceUrl = `https://api.openrouteservice.org/geocode/search?api_key=${OPENROUTESERVICE_API_KEY}&text=${encodeURIComponent(address)}&boundary.country=BR&point.lat=${GEOCENTRIC_LAT}&point.lon=${GEOCENTRIC_LON}`;
-        // A URL final com o proxy AllOrigins
         const url = `${CORS_PROXY_URL}${encodeURIComponent(openRouteServiceUrl)}`;
         try {
             const response = await fetch(url);
@@ -119,26 +121,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(`Erro na geocodificação: ${response.statusText}`);
             }
             const data = await response.json();
-            if (data.features && data.features.length > 0) {
-                const coords = data.features[0].geometry.coordinates; // [lon, lat]
-                return [coords[1], coords[0]]; // Retorna [lat, lon]
-            } else {
-                return null; // Endereço não encontrado
-            }
+            // A API de geocodificação retorna uma lista de features.
+            // Para autocompletar, queremos todas as features.
+            return data.features;
         } catch (error) {
             console.error("Erro ao geocodificar:", error);
-            alert("Erro ao geocodificar o endereço. Tente novamente.");
+            // Removido o alert aqui para não incomodar no autocompletar,
+            // o erro será tratado quando o usuário tentar buscar a rota.
             return null;
         }
     }
 
     async function getRoute(originCoords, destinationCoords) {
-        // As coordenadas para a API de roteamento são [lon, lat]
         const start = `${originCoords[1]},${originCoords[0]}`;
         const end = `${destinationCoords[1]},${destinationCoords[0]}`;
-        // AQUI: A URL da API do OpenRouteService para roteamento
         const openRouteServiceUrl = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${OPENROUTESERVICE_API_KEY}&start=${start}&end=${end}`;
-        // A URL final com o proxy AllOrigins
         const url = `${CORS_PROXY_URL}${encodeURIComponent(openRouteServiceUrl)}`;
 
         try {
@@ -151,9 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(`Erro ao buscar rota: ${response.statusText}`);
             }
             const data = await response.json();
-            // A geometria da rota vem em um formato GeoJSON LineString
             const routeGeometry = data.features[0].geometry.coordinates; // [[lon, lat], [lon, lat], ...]
-            // Converter para o formato [lat, lon] para Leaflet e armazenar
             return routeGeometry.map(coord => [coord[1], coord[0]]);
         } catch (error) {
             console.error("Erro ao obter a rota:", error);
@@ -162,7 +157,65 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Event Listener para o botão Buscar Rota
+    // **NOVA FUNÇÃO: Processar sugestões de autocompletar**
+    async function handleAutocomplete(inputElement, suggestionsContainer) {
+        clearTimeout(debounceTimeout); // Limpa o timeout anterior
+
+        const query = inputElement.value.trim();
+        suggestionsContainer.innerHTML = ''; // Limpa as sugestões anteriores
+
+        if (query.length < 3) { // Só busca se tiver pelo menos 3 caracteres
+            return;
+        }
+
+        debounceTimeout = setTimeout(async () => {
+            const features = await geocodeAddress(query);
+
+            if (features && features.length > 0) {
+                features.forEach(feature => {
+                    const li = document.createElement('li');
+                    // O "properties.label" geralmente tem o endereço formatado
+                    li.textContent = feature.properties.label;
+                    li.dataset.lat = feature.geometry.coordinates[1]; // Latitude
+                    li.dataset.lon = feature.geometry.coordinates[0]; // Longitude
+                    li.classList.add('suggestion-item'); // Adiciona uma classe para estilização
+
+                    li.addEventListener('click', () => {
+                        inputElement.value = feature.properties.label;
+                        // Armazena as coordenadas no próprio elemento input (opcional, para facilitar)
+                        inputElement.dataset.lat = feature.geometry.coordinates[1];
+                        inputElement.dataset.lon = feature.geometry.coordinates[0];
+                        suggestionsContainer.innerHTML = ''; // Limpa as sugestões
+                        suggestionsContainer.style.display = 'none'; // Esconde a lista
+                    });
+                    suggestionsContainer.appendChild(li);
+                });
+                suggestionsContainer.style.display = 'block'; // Mostra a lista de sugestões
+            } else {
+                suggestionsContainer.innerHTML = '<li>Nenhuma sugestão encontrada.</li>';
+                suggestionsContainer.style.display = 'block';
+            }
+        }, 500); // Debounce de 500ms
+    }
+
+    // Event Listeners para autocompletar
+    originInput.addEventListener('input', () => handleAutocomplete(originInput, originSuggestions));
+    destinationInput.addEventListener('input', () => handleAutocomplete(destinationInput, destinationSuggestions));
+
+    // Ocultar sugestões quando o campo perde o foco, mas com um pequeno atraso
+    // para permitir o clique na sugestão
+    originInput.addEventListener('blur', () => {
+        setTimeout(() => {
+            originSuggestions.style.display = 'none';
+        }, 150);
+    });
+    destinationInput.addEventListener('blur', () => {
+        setTimeout(() => {
+            destinationSuggestions.style.display = 'none';
+        }, 150);
+    });
+
+    // Event Listener para o botão Buscar Rota (Ligeira modificação para usar data-lat/lon)
     findRouteBtn.addEventListener('click', async function() {
         const originAddress = originInput.value.trim();
         const destinationAddress = destinationInput.value.trim();
@@ -172,17 +225,38 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // 1. Geocodificar origem
-        const originCoords = await geocodeAddress(originAddress);
+        let originCoords = null;
+        let destinationCoords = null;
+
+        // Tenta usar as coordenadas armazenadas do autocompletar, se existirem
+        if (originInput.dataset.lat && originInput.dataset.lon) {
+            originCoords = [parseFloat(originInput.dataset.lat), parseFloat(originInput.dataset.lon)];
+        } else {
+            // Se não, geocodifica o endereço digitado
+            const features = await geocodeAddress(originAddress);
+            if (features && features.length > 0) {
+                const coords = features[0].geometry.coordinates;
+                originCoords = [coords[1], coords[0]];
+            }
+        }
+
         if (!originCoords) {
-            alert('Origem não encontrada. Verifique o endereço.');
+            alert('Origem não encontrada ou não selecionada. Verifique o endereço.');
             return;
         }
 
-        // 2. Geocodificar destino
-        const destinationCoords = await geocodeAddress(destinationAddress);
+        if (destinationInput.dataset.lat && destinationInput.dataset.lon) {
+            destinationCoords = [parseFloat(destinationInput.dataset.lat), parseFloat(destinationInput.dataset.lon)];
+        } else {
+            const features = await geocodeAddress(destinationAddress);
+            if (features && features.length > 0) {
+                const coords = features[0].geometry.coordinates;
+                destinationCoords = [coords[1], coords[0]];
+            }
+        }
+
         if (!destinationCoords) {
-            alert('Destino não encontrada. Verifique o endereço.');
+            alert('Destino não encontrado ou não selecionado. Verifique o endereço.');
             return;
         }
 
