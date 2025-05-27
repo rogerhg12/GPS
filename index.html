@@ -6,56 +6,7 @@
     <title>GPS - Navegação e Avaliação de Piso</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Estilos básicos para a lista de sugestões */
-        .suggestions-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            border: 1px solid #ccc;
-            max-height: 200px;
-            overflow-y: auto;
-            background-color: white;
-            position: absolute; /* Para que apareça sobre outros elementos */
-            z-index: 1000; /* Garante que fique acima de outros elementos */
-            width: calc(100% - 2px); /* Ajusta a largura para o input */
-            display: none; /* Inicia oculto */
-        }
-        .suggestion-item {
-            padding: 8px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-        }
-        .suggestion-item:hover {
-            background-color: #f0f0f0;
-        }
-        /* Ajuste para posicionar a lista corretamente com os inputs */
-        .input-group {
-            position: relative; /* Necessário para o posicionamento absolute da lista */
-            margin-bottom: 10px; /* Espaço entre os grupos de input */
-        }
-        /* Garante que o mapa não seja sobreposto por inputs fixos na tela */
-        #map {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 0; /* Mapa por baixo de outros elementos */
-        }
-        /* Ajuste para o painel de controles ficar sobre o mapa */
-        .controls {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 1000; /* Acima do mapa */
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-    </style>
-</head>
+    </head>
 <body>
     <div id="map"></div>
     <div class="controls">
