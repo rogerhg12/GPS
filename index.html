@@ -3,47 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avaliação de Piso e Rotas</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+    <title>GPS - Navegação e Avaliação de Piso</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Estilos básicos para a lista de sugestões */
+        .suggestions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border: 1px solid #ccc;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: white;
+            position: absolute; /* Para que apareça sobre outros elementos */
+            z-index: 1000; /* Garante que fique acima de outros elementos */
+            width: calc(100% - 2px); /* Ajusta a largura para o input */
+            display: none; /* Inicia oculto */
+        }
+        .suggestion-item {
+            padding: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .suggestion-item:hover {
+            background-color: #f0f0f0;
+        }
+        /* Ajuste para posicionar a lista corretamente com os inputs */
+        .input-group {
+            position: relative; /* Necessário para o posicionamento absolute da lista */
+            margin-bottom: 10px; /* Espaço entre os grupos de input */
+        }
+        /* Garante que o mapa não seja sobreposto por inputs fixos na tela */
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0; /* Mapa por baixo de outros elementos */
+        }
+        /* Ajuste para o painel de controles ficar sobre o mapa */
+        .controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000; /* Acima do mapa */
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-    <h1>Avalie o Piso e Planeje suas Rotas!</h1>
-
-    <div class="route-planning-container">
-        <h2>Planejar Trajeto</h2>
+    <div id="map"></div>
+    <div class="controls">
+        <h1>GPS</h1>
         <div class="input-group">
             <label for="originInput">Origem:</label>
-            <input type="text" id="originInput" placeholder="Ex: Rua A, 123">
-        </div>
+            <input type="text" id="originInput" placeholder="Ex: Av. Paulista, 1000">
+            <ul id="originSuggestions" class="suggestions-list"></ul> </div>
         <div class="input-group">
             <label for="destinationInput">Destino:</label>
-            <input type="text" id="destinationInput" placeholder="Ex: Av. B, 456">
-        </div>
-        <div class="action-buttons-group">
-            <button id="findRouteBtn" class="action-btn">Buscar Rota</button>
-            <button id="locateMeBtn" class="action-btn">Minha Localização</button>
-        </div>
-    </div>
+            <input type="text" id="destinationInput" placeholder="Ex: Parque Ibirapuera">
+            <ul id="destinationSuggestions" class="suggestions-list"></ul> </div>
+        <button id="findRouteBtn">Buscar Rota</button>
+        <button id="locateMeBtn">Minha Localização</button>
 
-    <div id="map"></div>
-    <div class="evaluation-container">
-        <h2>Como está o piso aqui?</h2>
+        <h2>Avaliação de Piso</h2>
         <div class="evaluation-buttons">
-            <button class="evaluation-btn" data-level="otimo">Ótimo</button>
-            <button class="evaluation-btn" data-level="bom">Bom</button>
-            <button class="evaluation-btn" data-level="regular">Regular</button>
-            <button class="evaluation-btn" data-level="ruim">Ruim</button>
-            <button class="evaluation-btn" data-level="pessimo">Péssimo</button>
+            <button class="evaluation-btn" data-rating="bom">Bom</button>
+            <button class="evaluation-btn" data-rating="regular">Regular</button>
+            <button class="evaluation-btn" data-rating="ruim">Ruim</button>
         </div>
-        <div class="segment-evaluation-buttons">
-            <button id="startSegmentEvaluation" class="action-btn">Iniciar Avaliação de Trecho</button>
-            <button id="endSegmentEvaluation" class="action-btn" disabled>Finalizar Avaliação</button>
+        <div class="segment-evaluation">
+            <button id="startSegmentEvaluation">Iniciar Avaliação de Trecho</button>
+            <button id="endSegmentEvaluation" disabled>Finalizar Avaliação</button>
         </div>
     </div>
 
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
